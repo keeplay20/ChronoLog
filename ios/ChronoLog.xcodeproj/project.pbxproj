@@ -10,6 +10,8 @@
 		00E356F31AD99517003FC87E /* ChronoLogTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* ChronoLogTests.m */; };
 		0C80B921A6F3F58F76C31292 /* libPods-ChronoLog.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-ChronoLog.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
+		A1B2C3D41A68108700A75B9A /* DeviceIntegrityModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D21A68108700A75B9A /* DeviceIntegrityModule.swift */; };
+		A1B2C3D51A68108700A75B9A /* DeviceIntegrityModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D31A68108700A75B9A /* DeviceIntegrityModule.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-ChronoLog-ChronoLogTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-ChronoLog-ChronoLogTests.a */; };
@@ -37,6 +39,9 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ChronoLog/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ChronoLog/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = ChronoLog/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A1B2C3D21A68108700A75B9A /* DeviceIntegrityModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DeviceIntegrityModule.swift; path = ChronoLog/DeviceIntegrityModule.swift; sourceTree = "<group>"; };
+		A1B2C3D31A68108700A75B9A /* DeviceIntegrityModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DeviceIntegrityModule.m; path = ChronoLog/DeviceIntegrityModule.m; sourceTree = "<group>"; };
+		A1B2C3D61A68108700A75B9A /* ChronoLog-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ChronoLog-Bridging-Header.h"; path = "ChronoLog/ChronoLog-Bridging-Header.h"; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-ChronoLog-ChronoLogTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ChronoLog-ChronoLogTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B4392A12AC88292D35C810B /* Pods-ChronoLog.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChronoLog.debug.xcconfig"; path = "Target Support Files/Pods-ChronoLog/Pods-ChronoLog.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-ChronoLog.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChronoLog.release.xcconfig"; path = "Target Support Files/Pods-ChronoLog/Pods-ChronoLog.release.xcconfig"; sourceTree = "<group>"; };
@@ -94,6 +99,9 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				A1B2C3D21A68108700A75B9A /* DeviceIntegrityModule.swift */,
+				A1B2C3D31A68108700A75B9A /* DeviceIntegrityModule.m */,
+				A1B2C3D61A68108700A75B9A /* ChronoLog-Bridging-Header.h */,
 			);
 			name = ChronoLog;
 			sourceTree = "<group>";
@@ -396,6 +404,8 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				A1B2C3D41A68108700A75B9A /* DeviceIntegrityModule.swift in Sources */,
+				A1B2C3D51A68108700A75B9A /* DeviceIntegrityModule.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,6 +493,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = ChronoLog;
+				SWIFT_OBJC_BRIDGING_HEADER = "ChronoLog/ChronoLog-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -510,6 +521,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = ChronoLog;
+				SWIFT_OBJC_BRIDGING_HEADER = "ChronoLog/ChronoLog-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

@@ -1,79 +1,112 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# ChronoLog — Episodic Performance Dashboard
 
-# Getting Started
+A high-performance React Native dashboard for streaming episodic medical telemetry. Built for sustained 60/120 FPS scrolling across **2,200+** dynamic-height episode cards, fluid shared-element transitions, gesture-driven diagnostics, and custom native device-integrity checks on iOS (Swift) and Android (Kotlin).
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20Android-blue)
+![React Native](https://img.shields.io/badge/React%20Native-0.76-61DAFB)
 
-## Step 1: Start the Metro Server
+## Features
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+- **Virtualized telemetry feed** — `@shopify/flash-list` with precomputed `overrideItemLayout` heights, `getItemType` recycling pools, and `drawDistance` tuning for flick-scroll without blank flashes.
+- **Independent card updates** — `React.memo` with custom equality on every card sub-component; stable `useCallback` handlers prevent list-wide re-renders.
+- **Dynamic layouts** — CRITICAL cards render SVG sparklines + pulsing indicator; ROUTINE cards use a compact metrics row; CLINICAL_NOTE and SYSTEM_ALERT have distinct footprints.
+- **Expand transition** — Card `measureInWindow` bounds morph into full-screen detail via Reanimated shared values (UI thread).
+- **Diagnostics sheet** — Pan gesture with velocity-based snap, rubber-band overscroll, flick-to-dismiss — all on the native UI thread via Reanimated 3 + Gesture Handler 2.
+- **Device integrity gateway** — Custom native module (no third-party wrappers) detects jailbreak (iOS), root/emulator (Android), and blocks interaction behind a polished warning modal until acknowledged.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+## Architecture — Performance
+
+| Concern | Approach |
+|--------|----------|
+| List virtualization | FlashList with `estimatedItemSize`, per-type height map via `estimateEpisodeHeight()`, `getItemType` for view recycling |
+| Re-render isolation | `EpisodeCard`, `Sparkline`, `PulsingIndicator` memoized; episode objects are stable references from bundled JSON |
+| Animations | Reanimated 3 worklets — morph overlay, diagnostics sheet, pulse indicator run off JS thread |
+| Data | 2,202 episodes bundled as `src/data/episodes.json` (regenerate via `npm run generate-data`) |
+| Sparklines | Lightweight `react-native-svg` paths with dashed gap markers for null vitals |
+
+## Native Bridge — Device Integrity
+
+### iOS (`DeviceIntegrityModule.swift`)
+- Scans known jailbreak filesystem paths (`/Applications/Cydia.app`, MobileSubstrate, etc.)
+- Sandbox write test to `/private/`
+- `cydia://` URL scheme probe
+- dyld injected-library scan (Substrate, SSLKillSwitch, etc.)
+- Simulator excluded from jailbreak positives in `#if targetEnvironment(simulator)`
+
+### Android (`DeviceIntegrityModule.kt`)
+- Emulator fingerprint/model/hardware heuristics
+- `su` binary path checks + `which su` execution
+- `test-keys` build tag detection
+- Magisk / SuperSU data directory probes
+
+Exposed to JS as `NativeModules.DeviceIntegrityModule.checkDeviceIntegrity()` → `{ isSecure, platform, reasons[] }`.
+
+## Prerequisites
+
+- Node.js ≥ 18
+- Xcode 15+ (iOS)
+- Android Studio / SDK 34+ (Android)
+- CocoaPods (`gem install cocoapods`)
+- JDK 17
+
+## Setup & Run
 
 ```bash
-# using npm
-npm start
+git clone <your-repo-url>
+cd ChronoLog
+npm install
 
-# OR using Yarn
-yarn start
-```
+# Regenerate mock telemetry (optional)
+npm run generate-data
 
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### For iOS
-
-```bash
-# using npm
+# iOS
+cd ios && bundle exec pod install && cd ..
 npm run ios
 
-# OR using Yarn
-yarn ios
+# Android
+npm run android
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+### Release APK
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+```bash
+cd android
+./gradlew assembleRelease
+# Output: android/app/build/outputs/apk/release/app-release.apk
+```
 
-## Step 3: Modifying your App
+Or from project root: `npm run build:apk`
 
-Now that you have successfully run the app, let's modify it.
+### Performance Monitor
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+Shake device → **Show Perf Monitor** (or `Cmd+D` / `Cmd+M` in simulator). Rapid-scroll the feed to verify sustained frame rates.
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+## Project Structure
 
-## Congratulations! :tada:
+```
+src/
+  components/     EpisodeCard, Sparkline, DiagnosticsSheet, EpisodeDetailOverlay, …
+  data/           episodes.json (2200+ records)
+  native/         JS bridge wrapper for DeviceIntegrityModule
+  screens/        TelemetryFeed (FlashList host)
+  theme/          Dark clinical palette
+  types/          Episode schema
+  utils/          Height estimation helpers
+ios/ChronoLog/    DeviceIntegrityModule.swift + .m bridge
+android/.../      DeviceIntegrityModule.kt + Package
+scripts/          generateMockData.js
+```
 
-You've successfully run and modified your React Native App. :partying_face:
+## Scripts
 
-### Now what?
+| Command | Description |
+|---------|-------------|
+| `npm start` | Metro bundler |
+| `npm run ios` | Run on iOS simulator/device |
+| `npm run android` | Run on Android emulator/device |
+| `npm run generate-data` | Regenerate 2200+ mock episodes |
+| `npm run build:apk` | Assemble release APK |
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+## License
 
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+MIT — built as a technical assessment submission.

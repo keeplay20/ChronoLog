@@ -1,117 +1,73 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
+ * ChronoLog – Episodic Performance Dashboard
  * @format
  */
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+import React, {useCallback, useEffect, useState} from 'react';
+import {ActivityIndicator, StyleSheet, View} from 'react-native';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {SecurityWarningModal} from './src/components/SecurityWarningModal';
+import {checkDeviceIntegrity} from './src/native/DeviceIntegrity';
+import {TelemetryFeed} from './src/screens/TelemetryFeed';
+import {colors} from './src/theme/colors';
 
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [loading, setLoading] = useState(true);
+  const [integrityBlocked, setIntegrityBlocked] = useState(false);
+  const [reasons, setReasons] = useState<string[]>([]);
+  const [acknowledged, setAcknowledged] = useState(false);
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  useEffect(() => {
+    checkDeviceIntegrity()
+      .then(result => {
+        if (!result.isSecure) {
+          setIntegrityBlocked(true);
+          setReasons(result.reasons);
+        }
+      })
+      .catch(() => {
+        // Allow dev/simulator fallback
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const onAcknowledge = useCallback(() => setAcknowledged(true), []);
+
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color={colors.accent} />
+      </View>
+    );
+  }
+
+  const showWarning = integrityBlocked && !acknowledged;
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={styles.root}>
+        {!showWarning && <TelemetryFeed />}
+        <SecurityWarningModal
+          visible={showWarning}
+          reasons={reasons}
+          onAcknowledge={onAcknowledge}
+        />
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  root: {
+    flex: 1,
+    backgroundColor: colors.bg,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  loader: {
+    flex: 1,
+    backgroundColor: colors.bg,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
