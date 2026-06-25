@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {StyleSheet, View} from 'react-native';
-import {colors} from '../../theme/colors';
+import {colors} from '../theme/colors';
 
 interface PulsingIndicatorProps {
   color?: string;

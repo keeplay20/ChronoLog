@@ -13,11 +13,12 @@ import episodesData from '../data/episodes.json';
 import type {Episode} from '../types/episode';
 import {colors} from '../theme/colors';
 import {estimateEpisodeHeight} from '../utils/episodeLayout';
-import {EpisodeCard} from './EpisodeCard';
+import {EpisodeCard} from '../components/EpisodeCard';
+
 import {
   EpisodeDetailOverlay,
   type CardLayout,
-} from './EpisodeDetailOverlay';
+} from '../components/EpisodeDetailOverlay';
 
 const EPISODES = episodesData as Episode[];
 
@@ -79,7 +80,9 @@ function TelemetryFeedComponent() {
       <View style={styles.header}>
         <Text style={styles.brand}>ChronoLog</Text>
         <Text style={styles.tagline}>Episodic Performance Dashboard</Text>
-        <Text style={styles.count}>{EPISODES.length.toLocaleString()} episodes</Text>
+        <Text style={styles.count}>
+          {EPISODES.length.toLocaleString()} episodes
+        </Text>
       </View>
     ),
     [],
