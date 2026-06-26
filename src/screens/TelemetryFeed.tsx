@@ -7,7 +7,6 @@ import {
   type View as ViewType,
 } from 'react-native';
 import {FlashList} from '@shopify/flash-list';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import episodesData from '../data/episodes.json';
 import type {Episode} from '../types/episode';
@@ -89,7 +88,7 @@ function TelemetryFeedComponent() {
   );
 
   return (
-    <GestureHandlerRootView style={styles.root}>
+    <>
       <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
       <View style={[styles.container, {paddingTop: insets.top}]}>
         <FlashList
@@ -113,7 +112,7 @@ function TelemetryFeedComponent() {
           onClose={() => setSelected(null)}
         />
       )}
-    </GestureHandlerRootView>
+    </>
   );
 }
 

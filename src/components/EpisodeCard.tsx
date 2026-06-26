@@ -38,30 +38,60 @@ function EpisodeCardComponent({episode, onPress}: EpisodeCardProps) {
         </View>
 
         <Text style={styles.meta}>
-          {episode.eventType.replace('_', ' ')} · {formatTimestamp(episode.timestamp)}
+          {episode.eventType.replace('_', ' ')} ·{' '}
+          {formatTimestamp(episode.timestamp)}
         </Text>
 
         {episode.eventType === 'VITALS_STREAM' && episode.metrics && (
           <View style={styles.vitalsBlock}>
             {episode.severity === 'CRITICAL' ? (
               <>
-                <Sparkline data={episode.metrics.heartRate} width={300} height={44} />
+                <Sparkline
+                  data={episode.metrics.heartRate}
+                  width={300}
+                  height={44}
+                />
                 <View style={styles.metricsRow}>
-                  <Metric label="HR" value={lastValid(episode.metrics.heartRate)} unit="bpm" />
+                  <Metric
+                    label="HR"
+                    value={lastValid(episode.metrics.heartRate)}
+                    unit="bpm"
+                  />
                   <Metric
                     label="SpO₂"
                     value={episode.metrics.spo2}
                     unit="%"
-                    alert={episode.metrics.spo2 !== null && episode.metrics.spo2 < 92}
+                    alert={
+                      episode.metrics.spo2 !== null && episode.metrics.spo2 < 92
+                    }
                   />
-                  <Metric label="RR" value={episode.metrics.respiratoryRate} unit="/min" />
+                  <Metric
+                    label="RR"
+                    value={episode.metrics.respiratoryRate}
+                    unit="/min"
+                  />
                 </View>
               </>
             ) : (
               <View style={styles.compactMetrics}>
-                <Metric label="HR" value={lastValid(episode.metrics.heartRate)} unit="bpm" compact />
-                <Metric label="SpO₂" value={episode.metrics.spo2} unit="%" compact />
-                <Metric label="RR" value={episode.metrics.respiratoryRate} unit="/min" compact />
+                <Metric
+                  label="HR"
+                  value={lastValid(episode.metrics.heartRate)}
+                  unit="bpm"
+                  compact
+                />
+                <Metric
+                  label="SpO₂"
+                  value={episode.metrics.spo2}
+                  unit="%"
+                  compact
+                />
+                <Metric
+                  label="RR"
+                  value={episode.metrics.respiratoryRate}
+                  unit="/min"
+                  compact
+                />
               </View>
             )}
           </View>
@@ -85,8 +115,12 @@ function EpisodeCardComponent({episode, onPress}: EpisodeCardProps) {
 
         {episode.eventType === 'SYSTEM_ALERT' && episode.systemPayload && (
           <View style={styles.systemRow}>
-            <Text style={styles.systemCode}>{episode.systemPayload.errorCode}</Text>
-            <Text style={styles.systemDevice}>{episode.systemPayload.deviceType}</Text>
+            <Text style={styles.systemCode}>
+              {episode.systemPayload.errorCode}
+            </Text>
+            <Text style={styles.systemDevice}>
+              {episode.systemPayload.deviceType}
+            </Text>
             <Text style={styles.systemBattery}>
               🔋 {episode.systemPayload.batteryLevel}%
             </Text>

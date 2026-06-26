@@ -115,9 +115,14 @@ function EpisodeDetailOverlayComponent({
             <Text style={styles.heroPatient}>{episode.patientName}</Text>
           </View>
           <Text style={styles.heroMeta}>
-            {episode.eventType.replace(/_/g, ' ')} · {formatTimestamp(episode.timestamp)}
+            {episode.eventType.replace(/_/g, ' ')} ·{' '}
+            {formatTimestamp(episode.timestamp)}
           </Text>
-          <View style={[styles.severityBanner, {backgroundColor: accent + '22', borderColor: accent}]}>
+          <View
+            style={[
+              styles.severityBanner,
+              {backgroundColor: accent + '22', borderColor: accent},
+            ]}>
             <Text style={[styles.severityBannerText, {color: accent}]}>
               {episode.severity}
             </Text>
@@ -125,7 +130,11 @@ function EpisodeDetailOverlayComponent({
 
           {episode.metrics?.heartRate && episode.severity === 'CRITICAL' && (
             <View style={styles.heroChart}>
-              <Sparkline data={episode.metrics.heartRate} width={SCREEN_W - 48} height={80} />
+              <Sparkline
+                data={episode.metrics.heartRate}
+                width={SCREEN_W - 48}
+                height={80}
+              />
             </View>
           )}
 

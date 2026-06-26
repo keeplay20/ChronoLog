@@ -26,8 +26,12 @@ function App(): React.JSX.Element {
           setReasons(result.reasons);
         }
       })
-      .catch(() => {
-        // Allow dev/simulator fallback
+      .catch(error => {
+        console.error(error);
+
+        setIntegrityBlocked(true);
+
+        setReasons(['Unable to verify device integrity']);
       })
       .finally(() => setLoading(false));
   }, []);
